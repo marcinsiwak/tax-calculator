@@ -60,3 +60,7 @@ android {
         targetSdk = 32
     }
 }
+
+dependencies {
+    implementation("io.insert-koin:koin-core:3.2.0")
+}

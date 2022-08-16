@@ -1,4 +1,5 @@
 package pl.msiwak.taxcalculator.presentation
 
-class CalculatorViewState {
-}
+data class CalculatorViewState(
+    val currencyValue: String = "basba"
+)
