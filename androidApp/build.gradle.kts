@@ -55,5 +55,7 @@ dependencies {
     implementation ("androidx.compose.ui:ui-tooling:$compose_version")
     implementation ("androidx.compose.runtime:runtime-livedata:$compose_version")
     implementation("io.insert-koin:koin-androidx-compose:3.2.0")
+    implementation ("androidx.compose.ui:ui-tooling:1.2.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
 
 }

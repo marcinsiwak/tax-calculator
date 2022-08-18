@@ -23,7 +23,12 @@ kotlin {
     }
     
     sourceSets {
-        val commonMain by getting
+        val commonMain by getting {
+            dependencies {
+                implementation("io.insert-koin:koin-core:3.2.0")
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
+            }
+        }
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
@@ -59,8 +64,4 @@ android {
         minSdk = 27
         targetSdk = 32
     }
-}
-
-dependencies {
-    implementation("io.insert-koin:koin-core:3.2.0")
 }
