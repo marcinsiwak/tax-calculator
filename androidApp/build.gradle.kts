@@ -35,6 +35,7 @@ android {
 dependencies {
     val lifecycle_version = "2.6.0-alpha01"
     val compose_version = "1.2.0"
+    val ktorVersion = "2.1.0"
 
     implementation(project(":shared"))
     implementation("com.google.android.material:material:1.6.1")
@@ -57,5 +58,11 @@ dependencies {
     implementation("io.insert-koin:koin-androidx-compose:3.2.0")
     implementation ("androidx.compose.ui:ui-tooling:1.2.1")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
+    implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+    implementation("io.ktor:ktor-client-core:$ktorVersion")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
 
 }

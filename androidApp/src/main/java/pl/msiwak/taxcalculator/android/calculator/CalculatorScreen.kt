@@ -3,8 +3,13 @@ package pl.msiwak.taxcalculator.android.calculator
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
@@ -14,12 +19,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import kotlinx.datetime.LocalDate
 import org.koin.androidx.compose.getViewModel
-import pl.msiwak.taxcalculator.android.custom.Calendar
 import pl.msiwak.taxcalculator.android.custom.DateField
 import pl.msiwak.taxcalculator.android.custom.DefaultField
 import pl.msiwak.taxcalculator.android.custom.InputField
+import pl.msiwak.taxcalculator.android.custom.StaticField
+import pl.msiwak.taxcalculator.data.Operation
+import pl.msiwak.taxcalculator.data.OperationType
 import pl.msiwak.taxcalculator.presentation.CalculatorUiAction
 import pl.msiwak.taxcalculator.presentation.CalculatorViewState
 
@@ -28,33 +34,62 @@ fun CalculatorScreen() {
     val viewModel = getViewModel<CalculatorViewModel>()
     val state = viewModel.viewState.collectAsState()
     Column {
-        OperationItem(state = state.value, viewModel = viewModel)
+        NewOperationItem(state = state.value, viewModel = viewModel)
+        OperationsList(items = state.value.operations)
 
-        if (state.value.isCalendarVisible) {
-            Calendar(dateCallback = { year, month, day ->
-                viewModel.onUiAction(
-                    CalculatorUiAction.OnDateSet(
-                        LocalDate(year, month, day)
-                    )
-                )
-            })
+    }
+}
+
+@Composable
+fun OperationsList(modifier: Modifier = Modifier, items: List<Operation>) {
+    LazyColumn(modifier = Modifier.fillMaxHeight()) {
+        itemsIndexed(items) { index, operation ->
+            OperationItem(operation = operation)
+
         }
     }
 }
 
 @Composable
-fun OperationItem(
+fun OperationItem(modifier: Modifier = Modifier, operation: Operation) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        StaticField(text = operation.price.toString())
+        StaticField(text = operation.date.toString())
+        StaticField(text = operation.currency)
+        StaticField(text = operation.exchange)
+        val color = if (operation.operationType == OperationType.BUY) {
+            Color.Green
+        } else {
+            Color.Yellow
+        }
+        DefaultField(
+            modifier = Modifier.background(color, shape = CircleShape),
+            text = operation.operationType.name
+        )
+    }
+}
+
+@Composable
+fun NewOperationItem(
     modifier: Modifier = Modifier,
     state: CalculatorViewState,
     viewModel: CalculatorViewModel
 ) {
-    Row(modifier = modifier) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+    ) {
         InputField(
             text = state.currencyValue,
             valueChangedCallback = { viewModel.onUiAction(CalculatorUiAction.InputValueChanged(it)) })
         DateField(
             text = "${state.date}",
-            clickCallback = { viewModel.onUiAction(CalculatorUiAction.OnDateClicked) })
+            isCalendarVisible = state.isCalendarVisible,
+            clickCallback = { viewModel.onUiAction(CalculatorUiAction.OnDateClicked) },
+            dateCallback = { viewModel.onUiAction(CalculatorUiAction.OnDateSet(it)) })
 
         CurrencyDropDownMenu(
             state = state,
@@ -63,12 +98,18 @@ fun OperationItem(
             fieldClickCallback = { viewModel.onUiAction(CalculatorUiAction.OnCurrencyFieldClicked) },
             dismissCallback = { viewModel.onUiAction(CalculatorUiAction.OnDropDownDismiss) }
         )
-        DefaultField(modifier = modifier.background(Color.Green, shape = CircleShape), text = "BUY")
         DefaultField(
-            modifier = modifier.background(Color.Yellow, shape = CircleShape),
+            modifier = modifier
+                .background(Color.Green, shape = CircleShape)
+                .clickable { viewModel.onUiAction(CalculatorUiAction.OnBuyClicked) },
+            text = "BUY"
+        )
+        DefaultField(
+            modifier = modifier
+                .background(Color.Yellow, shape = CircleShape)
+                .clickable { viewModel.onUiAction(CalculatorUiAction.OnSellClicked) },
             text = "SELL"
         )
-
     }
 }
 

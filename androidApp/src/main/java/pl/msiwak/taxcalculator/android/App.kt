@@ -1,14 +1,22 @@
 package pl.msiwak.taxcalculator.android
 
 import android.app.Application
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.serialization.kotlinx.json.json
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.GlobalContext.startKoin
 import org.koin.dsl.module
 import pl.msiwak.taxcalculator.android.calculator.CalculatorViewModel
+import pl.msiwak.taxcalculator.api.ExchangesApi
+import pl.msiwak.taxcalculator.api.ExchangesApiImpl
+import pl.msiwak.taxcalculator.domain.GetExchangeUseCase
+import pl.msiwak.taxcalculator.repository.ExchangesRepository
+import pl.msiwak.taxcalculator.repository.ExchangesRepositoryImpl
 
-class App: Application() {
+class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
@@ -16,13 +24,36 @@ class App: Application() {
         startKoin {
             androidLogger()
             androidContext(this@App)
-            modules(appModule)
+            modules(viewModelsModule, appModule, repoModule, apiModule, useCaseModule)
         }
 
     }
 }
 
-val appModule = module {
-    viewModel { CalculatorViewModel() }
 
+val viewModelsModule = module {
+    viewModel { CalculatorViewModel(get()) }
+
+}
+
+val appModule = module {
+    single {
+        HttpClient() {
+            install(ContentNegotiation) {
+                json()
+            }
+        }
+    }
+}
+
+val repoModule = module {
+    factory<ExchangesRepository> { ExchangesRepositoryImpl(get()) }
+}
+
+val apiModule = module {
+    factory<ExchangesApi> { ExchangesApiImpl(get()) }
+}
+
+val useCaseModule = module {
+    factory { GetExchangeUseCase(get()) }
 }
