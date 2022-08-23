@@ -5,7 +5,8 @@ import kotlinx.datetime.LocalDate
 class Operation(
     val price: Double,
     val date: LocalDate,
-    val currency: String,
+    val currency: Currency,
     val exchange: String,
-    val operationType: OperationType
+    val exchangedValue: Double,
+    val operationType: OperationType,
 )
