@@ -14,5 +14,8 @@ data class CalculatorViewState(
     val isCalendarVisible: Boolean = false,
     val isDropDownMenuVisible: Boolean = false,
     val operations: List<Operation> = emptyList(),
-    val finalValue: String = ""
+    val incomesValue: String = "",
+    val outcomesValue: String = "",
+    val finalValue: String = "",
+    val isAlertShown: Boolean = false
 )

@@ -37,6 +37,7 @@ kotlin {
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
                 implementation("io.ktor:ktor-client-logging:$ktorVersion")
                 implementation("ch.qos.logback:logback-classic:1.2.11")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 
             }
         }

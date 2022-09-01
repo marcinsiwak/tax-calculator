@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,7 +17,8 @@ fun DateField(
     text: String,
     isCalendarVisible: Boolean,
     clickCallback: () -> Unit,
-    dateCallback: (LocalDate) -> Unit
+    dateCallback: (LocalDate) -> Unit,
+    dismissCallback: () -> Unit
 ) {
     DefaultField(
         modifier = modifier
@@ -27,7 +29,7 @@ fun DateField(
             .border(
                 width = 2.dp,
                 color = Color.Black,
-                shape = CircleShape
+                shape = RoundedCornerShape(10.dp)
             )
             .clickable { clickCallback.invoke() },
         text = text
@@ -37,6 +39,9 @@ fun DateField(
     if (isCalendarVisible) {
         Calendar(dateCallback = { year, month, day ->
             dateCallback.invoke(LocalDate(year, month, day))
-        })
+        },
+            dismissCallback = {
+                dismissCallback.invoke()
+            })
     }
 }
