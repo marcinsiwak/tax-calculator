@@ -76,9 +76,9 @@ fun CalculatorScreen() {
                 .offset(y = 8.dp)
                 .align(Alignment.End)
         ) {
-            FinalValueField(modifier = Modifier.width(100.dp).height(32.dp), text = state.value.incomesValue, shape = CustomShape(CornersEnum.BOTTOM_LEFT))
-            FinalValueField(modifier = Modifier.width(100.dp).height(32.dp), text = state.value.outcomesValue, shape = RectangleShape)
-            FinalValueField(modifier = Modifier.width(100.dp).height(32.dp), text = state.value.finalValue, shape = CustomShape(CornersEnum.BOTTOM_RIGHT))
+            FinalValueField(modifier = Modifier.width(101.dp).height(32.dp), text = state.value.incomesValue, shape = CustomShape(CornersEnum.BOTTOM_LEFT))
+            FinalValueField(modifier = Modifier.width(101.dp).height(32.dp), text = state.value.outcomesValue, shape = RectangleShape)
+            FinalValueField(modifier = Modifier.width(90.dp).height(32.dp), text = state.value.finalValue, shape = CustomShape(CornersEnum.BOTTOM_RIGHT))
         }
 
         AlertScreen(
@@ -185,17 +185,6 @@ fun OperationItem(
                 .width(1.dp)
                 .background(Color.Black)
         )
-        val color = when (operation?.operationType) {
-            OperationType.BUY -> {
-                Color.Green
-            }
-            OperationType.SELL -> {
-                Color.Yellow
-            }
-            else -> {
-                Color.White
-            }
-        }
 
         Text(
             modifier = Modifier

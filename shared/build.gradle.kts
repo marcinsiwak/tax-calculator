@@ -38,6 +38,7 @@ kotlin {
                 implementation("io.ktor:ktor-client-logging:$ktorVersion")
                 implementation("ch.qos.logback:logback-classic:1.2.11")
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+                implementation ("com.jakewharton.timber:timber:5.0.1")
 
             }
         }
@@ -49,6 +50,7 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
+
             }        }
         val androidTest by getting
         val iosX64Main by getting

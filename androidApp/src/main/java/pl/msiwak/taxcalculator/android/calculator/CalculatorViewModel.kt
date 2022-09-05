@@ -2,6 +2,7 @@ package pl.msiwak.taxcalculator.android.calculator
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -14,6 +15,7 @@ import pl.msiwak.taxcalculator.data.SortOption
 import pl.msiwak.taxcalculator.domain.GetExchangeUseCase
 import pl.msiwak.taxcalculator.presentation.CalculatorUiAction
 import pl.msiwak.taxcalculator.presentation.CalculatorViewState
+import timber.log.Timber
 
 class CalculatorViewModel(private val getExchangeUseCase: GetExchangeUseCase) : ViewModel() {
 
@@ -22,6 +24,10 @@ class CalculatorViewModel(private val getExchangeUseCase: GetExchangeUseCase) : 
         get() = _viewState
 
     private var currentType: SortOption = SortOption.Rate()
+
+    private val errorHandler = CoroutineExceptionHandler { _, e ->
+        Timber.e(e, e.message)
+    }
 
     fun onUiAction(action: CalculatorUiAction) {
         when (action) {
@@ -45,40 +51,44 @@ class CalculatorViewModel(private val getExchangeUseCase: GetExchangeUseCase) : 
         newList.addAll(_viewState.value.operations)
         when (action.sortOption) {
             is SortOption.Amount -> {
-                currentType = if (currentType is SortOption.Amount && !(currentType as SortOption.Amount).isDescending) {
-                    newList.sortByDescending { it.amount }
-                    SortOption.Amount(true)
-                } else {
-                    newList.sortBy { it.amount }
-                    SortOption.Amount(false)
-                }
+                currentType =
+                    if (currentType is SortOption.Amount && !(currentType as SortOption.Amount).isDescending) {
+                        newList.sortByDescending { it.amount }
+                        SortOption.Amount(true)
+                    } else {
+                        newList.sortBy { it.amount }
+                        SortOption.Amount(false)
+                    }
             }
             is SortOption.Rate -> {
-                currentType = if (currentType is SortOption.Rate && !(currentType as SortOption.Rate).isDescending) {
-                    newList.sortByDescending { it.exchange }
-                    SortOption.Rate(true)
-                } else {
-                    newList.sortBy { it.exchange }
-                    SortOption.Rate(false)
-                }
+                currentType =
+                    if (currentType is SortOption.Rate && !(currentType as SortOption.Rate).isDescending) {
+                        newList.sortByDescending { it.exchange }
+                        SortOption.Rate(true)
+                    } else {
+                        newList.sortBy { it.exchange }
+                        SortOption.Rate(false)
+                    }
             }
             is SortOption.ExchangedValue -> {
-                currentType = if (currentType is SortOption.ExchangedValue && !(currentType as SortOption.ExchangedValue).isDescending) {
-                    newList.sortByDescending { it.exchangedValue }
-                    SortOption.ExchangedValue(true)
-                } else {
-                    newList.sortBy { it.exchangedValue }
-                    SortOption.ExchangedValue(false)
-                }
+                currentType =
+                    if (currentType is SortOption.ExchangedValue && !(currentType as SortOption.ExchangedValue).isDescending) {
+                        newList.sortByDescending { it.exchangedValue }
+                        SortOption.ExchangedValue(true)
+                    } else {
+                        newList.sortBy { it.exchangedValue }
+                        SortOption.ExchangedValue(false)
+                    }
             }
             is SortOption.Type -> {
-                currentType = if (currentType is SortOption.Type && !(currentType as SortOption.Type).isBuy) {
-                    newList.sortByDescending { it.operationType }
-                    SortOption.Type(true)
-                } else {
-                    newList.sortBy { it.operationType }
-                    SortOption.Type(false)
-                }
+                currentType =
+                    if (currentType is SortOption.Type && !(currentType as SortOption.Type).isBuy) {
+                        newList.sortByDescending { it.operationType }
+                        SortOption.Type(true)
+                    } else {
+                        newList.sortBy { it.operationType }
+                        SortOption.Type(false)
+                    }
             }
         }
         _viewState.value = _viewState.value.copy(operations = newList)
@@ -109,7 +119,7 @@ class CalculatorViewModel(private val getExchangeUseCase: GetExchangeUseCase) : 
             return
         }
 
-        viewModelScope.launch {
+        viewModelScope.launch(errorHandler) {
             val output = getExchangeUseCase.invoke(currency, date)
             val exchangeRate = output.rates[0].mid
             val operation = _viewState.value.let {
